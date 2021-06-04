@@ -2,58 +2,16 @@ import SwiftUI
 import Combine
 import SDWebImageSwiftUI
 
-protocol IProducer {
-  var id: Int { get }
-  var avatar: String? { get }
-  var nickname: String { get }
-  var description: String { get }
-}
-
-extension IProducer {
-  var avatarURL: URL? {
-    guard let avatarPath = self.avatar else {
-      return nil
-    }
-    return URL(string: avatarPath)
-  }
-}
-
-struct Producer: IProducer {
-  let id: Int
-  let avatar: String?
-  let nickname: String
-  let description: String
-}
-
-
-extension Producer {
-  init() {
-    self.id = 0
-    self.avatar = nil
-    self.nickname = "Jon Doe"
-    self.description = ""
-  }
-}
-
 @available(iOS 13.0, *)
-class ModernProducerViewModel: ObservableObject {
-  @Published var producer: IProducer
-
-  init(initialData: IProducer) {
-    self.producer = initialData
-  }
-
-  func start() {
-
-  }
-}
-
-@available(iOS 13.0, *)
-struct ModernProducer: View {
+public struct ModernProducer: View {
 
   @ObservedObject var viewModel: ModernProducerViewModel
 
-  var body: some View {
+  public init(viewModel: ModernProducerViewModel) {
+    self.viewModel = viewModel
+  }
+
+  public var body: some View {
     VStack {
       WebImage(url: viewModel.producer.avatarURL)
         .placeholder {
@@ -70,23 +28,29 @@ struct ModernProducer: View {
         .font(.footnote)
         .padding([.leading, .trailing, .top])
 
-      HStack {
-        Button("Follow") {}
-          .frame(minWidth: 100, minHeight: 30)
-          .background(
-            Color(red: 101.0/255, green: 163.0/255, blue: 239.0/255)
-          )
-          .foregroundColor(.white)
-          .cornerRadius(10)
-        Button("Block") {}
-          .frame(width: 100, height: 30)
-          .background(
-            Color.red
-          )
-          .foregroundColor(.white)
-          .cornerRadius(10)
+      HStack(spacing: 16) {
+        Image(systemName: "plus")
+          .padding()
+          .background(Color.neuBackground)
+          .frame(width: 44, height: 44)
+          .cornerRadius(22)
+          .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 4)
+          .onTapGesture {
+            print("Subscribe")
+          }
+        Image(systemName: "eye.slash")
+          .padding()
+          .background(Color.neuBackground)
+          .frame(width: 44, height: 44)
+          .cornerRadius(22)
+          .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 4)
+          .onTapGesture {
+            print("Block")
+          }
       }
       .padding()
+
+      Divider()
     }
   }
 }
